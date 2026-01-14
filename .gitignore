@@ -1,0 +1,24 @@
+# Compiled class files
+*.class
+build/
+out/
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Test reports
+reports/
+jacoco/
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
