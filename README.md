@@ -1,122 +1,102 @@
-# Klondike Solitaire Game - README
-Project Overview
-A full-featured implementation of Klondike Solitaire in Java, supporting multiple game variants (Basic and Whitehead) using Model-View-Controller (MVC) architecture.
-Game Variants
-Basic Klondike
+# Klondike Solitaire Game
 
-Traditional Klondike Solitaire rules
-Alternating red/black card sequences in cascade piles
-Only Kings can be placed in empty cascade piles
-Only the top card in each cascade pile is visible
+Full-featured Klondike Solitaire implementation in Java with multiple game variants using MVC architecture.
 
-Whitehead Klondike
+![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
+![License](https://img.shields.io/badge/License-Academic-blue?style=flat-square)
 
-All cascade pile cards are dealt face-up
-Same-color builds (red on red, black on black)
-Multiple card moves require all cards to be the same suit
-Any card value can be placed in empty cascade piles
+## 🎮 Features
 
+- **Multiple Game Variants**: Play Basic or Whitehead Klondike
+- **MVC Architecture**: Clean separation of game logic, display, and user input
+- **Factory Pattern**: Extensible design for adding new variants
+- **Command-Line Interface**: Play directly from your terminal
+- **Comprehensive Testing**: JUnit test suite covering all game mechanics
 
-Key Features
-Core Game Mechanics
+## 🎯 Game Variants
 
-Move validation: Ensures all moves follow Klondike rules
-Pile management: Handles cascade, foundation, draw, and discard piles
-Scoring system: Tracks score based on foundation pile progress
-Game over detection: Identifies when no more moves are possible
+### Basic Klondike
+Traditional rules with alternating red/black sequences and Kings-only empty piles.
 
-Design Patterns
+### Whitehead Klondike
+All cards face-up, same-color builds, suit-matching for multi-card moves.
 
-Factory Pattern: KlondikeCreator creates appropriate game variants
-MVC Architecture: Separates game logic, display, and user input
-Interface-based design: Enables easy addition of new variants
+## 🚀 Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/giadapalazzo/Klondike-Solitaire-Game.git
 
-Running the Game
-Command-Line Arguments
-bashjava klondike.Klondike [variant] [numPiles] [numDraw]
-Parameters:
+# Compile the project
+javac klondike/Klondike.java
 
-variant (required): basic or whitehead
-numPiles (optional): Number of cascade piles (default: 7)
-numDraw (optional): Number of visible draw cards (default: 3)
-
-Examples:
-bash# Basic game with defaults (7 piles, 3 draw cards)
+# Run basic game (7 piles, 3 draw cards)
 java klondike.Klondike basic
 
-# Whitehead variant with 8 piles and default draw
-java klondike.Klondike whitehead 8
+# Run whitehead variant with custom settings
+java klondike.Klondike whitehead 8 5
+```
 
-# Basic game with 9 piles and 5 draw cards
-java klondike.Klondike basic 9 5
-Design Decisions & Changes
-Assignment 4 Refactoring
-Minimal changes to original code:
+## 📖 Usage
+```bash
+java klondike.Klondike [variant] [numPiles] [numDraw]
+```
 
-Core BasicKlondike implementation remained largely unchanged
-CascadePile interface was kept flexible enough to support both variants
-No modifications to controller or view interfaces required
+**Examples:**
+- `java klondike.Klondike basic` - Start basic game with defaults
+- `java klondike.Klondike whitehead 9` - Whitehead with 9 piles
+- `java klondike.Klondike basic 7 5` - Basic with 7 piles, 5 draw cards
 
-Key abstractions:
+## 🎮 Game Controls
 
-CascadePile interface allows different visibility and move validation rules
-Factory pattern (KlondikeCreator) enables clean variant selection
-Whitehead variant extends or modifies only the specific rules that differ
+| Command | Action |
+|---------|--------|
+| `mpp <src> <num> <dest>` | Move cards between piles |
+| `md <dest>` | Move draw card to pile |
+| `mpf <src> <foundation>` | Move to foundation |
+| `mdf <foundation>` | Move draw to foundation |
+| `dd` | Discard/recycle draw card |
+| `q` | Quit game |
 
-Code Reuse Strategy
-To minimize duplication between BasicKlondike and WhiteheadKlondike:
+## 🏗️ Architecture
+```
+Model (Game Logic) ↔ Controller (Input Handler) ↔ View (Display)
+```
 
-Shared validation logic in helper methods
-Common pile management operations
-Consistent state management approach
+- **Model**: `BasicKlondike`, `WhiteheadKlondike` implementing `KlondikeModel`
+- **View**: `KlondikeTextualView` for text-based display
+- **Controller**: `KlondikeTextualController` for input processing
+- **Factory**: `KlondikeCreator` for variant instantiation
 
-Testing
-Comprehensive JUnit tests cover:
+## 🧪 Testing
 
-✅ Valid and invalid deck configurations
-✅ All move types (pile-to-pile, draw-to-pile, to-foundation)
-✅ Edge cases (empty piles, game over conditions)
-✅ Both Basic and Whitehead variant-specific rules
-✅ Controller integration with both models
+Run the comprehensive JUnit test suite:
+```bash
+# Tests cover all game mechanics, edge cases, and variant-specific rules
+javac -cp .:junit-4.13.2.jar klondike/test/*.java
+java -cp .:junit-4.13.2.jar org.junit.runner.JUnitCore klondike.test.TestSuite
+```
 
-Technical Implementation
-Key Classes
-BasicKlondike
+## 📚 What I Learned
 
-Implements standard Klondike rules
-Manages four pile types: cascade, foundation, draw, discard
-Validates moves according to traditional rules
+- **Design Patterns**: Factory pattern for extensible game variants
+- **MVC Architecture**: Separation of concerns in game design
+- **Interface Design**: Creating flexible, reusable abstractions
+- **Code Reuse**: Minimizing duplication across similar implementations
+- **Test-Driven Development**: Comprehensive unit testing
 
-WhiteheadKlondike
+## 🎓 Academic Context
 
-Overrides visibility, color matching, and empty pile rules
-Maintains same interface as BasicKlondike
-Implements same-suit multi-card move validation
+Developed for **CS 3500: Object-Oriented Design** at Northeastern University  
+Fall 2025 | Assignment 4: Model Variants
 
-KlondikeCreator
+## 👤 Author
 
-Factory class with GameType enum (BASIC, WHITEHEAD)
-Static create() method returns appropriate model instance
+**Giada Palazzo**  
+Computer Science & Philosophy @ Northeastern University
 
-CascadePileImpl
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/giada-palazzo-5581b42a9/)
+[![Email](https://img.shields.io/badge/Email-Contact-red?style=flat-square&logo=gmail)](mailto:palazzo.g@northeastern.edu)
 
-Handles card storage and visibility
-Implements move validation specific to each variant
-Supports multi-card pile transfers
+---
 
-Game Controls (Textual Interface)
-
-mpp <source> <numCards> <dest> - Move cards between cascade piles
-md <dest> - Move draw card to cascade pile
-mpf <source> <foundation> - Move cascade card to foundation
-mdf <foundation> - Move draw card to foundation
-dd - Discard draw card (recycles when empty)
-q - Quit game
-
-
-
-Author
-Giada Palazzo
-Computer Science & Philosophy, Northeastern University
-
-Note: This project demonstrates MVC architecture, factory design patterns, interface-based programming, and extensible object-oriented design principles.Claude is AI and can make mistakes. Please double-check responses.
+⭐ Star this repo if you found it helpful!
