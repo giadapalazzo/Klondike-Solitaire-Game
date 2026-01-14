@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'application'
+}
+
+group = 'hw03'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:4.13.2"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:4.12.0"
+}
+
+test {
+    finalizedBy jacocoTestReport
+    ignoreFailures = true
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = false
+        csv.required = false
+    }
+}
+
+checkstyle {
+    toolVersion = '10.23.1'
+    configFile = file("config/checkstyle/checkstyle.xml")
+    maxWarnings = 0
+    ignoreFailures = true
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+application {
+    mainClass = 'klondike.Klondike'
+}
+
+run {
+    args = ['basic', '7', '3']
+    standardInput = System.in
+}
+
+task runBasic(type: JavaExec) {
+    group = 'application'
+    description = 'Run Basic Klondike'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'klondike.Klondike'
+    args = ['basic', '7', '3']
+    standardInput = System.in
+}
+
+task runWhitehead(type: JavaExec) {
+    group = 'application'
+    description = 'Run Whitehead Klondike'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'klondike.Klondike'
+    args = ['whitehead', '7', '3']
+    standardInput = System.in
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21

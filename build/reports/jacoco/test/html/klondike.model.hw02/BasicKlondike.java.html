@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BasicKlondike.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">easygo</a> &gt; <a href="index.source.html" class="el_package">klondike.model.hw02</a> &gt; <span class="el_source">BasicKlondike.java</span></div><h1>BasicKlondike.java</h1><pre class="source lang-java linenums">package klondike.model.hw02;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+/**
+ * Basic implementation of the KlondikeModel Interface. Creates a 52 card deck
+ * and provides core functionality of Klondike solitaire game
+ */
+public class BasicKlondike implements KlondikeModel&lt;KlondikeCard&gt; {
+  private List&lt;CascadePile&gt; cascades;
+  private List&lt;List&lt;KlondikeCard&gt;&gt; foundations;
+  private List&lt;KlondikeCard&gt; drawPile;
+  private List&lt;KlondikeCard&gt; discardPile;
+  private boolean started;
+  private int numDraw;
+
+  /**
+   * Creates an empty game model that must be started with startGame().
+   */
+<span class="nc" id="L26">  public BasicKlondike() {</span>
+<span class="nc" id="L27">    this.started = false;</span>
+<span class="nc" id="L28">  }</span>
+
+  @Override
+  public List&lt;KlondikeCard&gt; createNewDeck() {
+<span class="nc" id="L32">    List&lt;KlondikeCard&gt; deck = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">    for (int v = 1; v &lt;= 13; v++) {</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">      for (KlondikeCard.Suit suit : KlondikeCard.Suit.values()) {</span>
+<span class="nc" id="L35">        deck.add(new CardImpl(suit, v));</span>
+      }
+    }
+<span class="nc" id="L38">    return deck;</span>
+  }
+
+  @Override
+  public void startGame(List&lt;KlondikeCard&gt; deck, boolean shuffle, int numPiles, int numDraw) {
+<span class="nc bnc" id="L43" title="All 2 branches missed.">    if (deck == null) {</span>
+<span class="nc" id="L44">      throw new IllegalArgumentException(&quot;Deck cannot be null&quot;);</span>
+    }
+
+<span class="nc bnc" id="L47" title="All 4 branches missed.">    if (numPiles &lt; 1 || numDraw &lt; 1) {</span>
+<span class="nc" id="L48">      throw new IllegalArgumentException(&quot;Must have at least one pile and one draw&quot;);</span>
+    }
+
+<span class="nc" id="L51">    validateDeck(deck);</span>
+<span class="nc" id="L52">    int neededForCascades = numPiles * (numPiles + 1) / 2;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">    if (deck.size() &lt; neededForCascades) {</span>
+<span class="nc" id="L54">      throw new IllegalArgumentException(&quot;Not enough cards to deal cascades&quot;);</span>
+    }
+
+<span class="nc" id="L57">    List&lt;KlondikeCard&gt; copy = new ArrayList&lt;&gt;(deck);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    if (shuffle) {</span>
+<span class="nc" id="L59">      Collections.shuffle(copy, new Random());</span>
+    }
+
+<span class="nc" id="L62">    cascades = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L63">    foundations = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    for (int i = 0; i &lt; 4; i++) {</span>
+<span class="nc" id="L65">      foundations.add(new ArrayList&lt;&gt;());</span>
+    }
+<span class="nc" id="L67">    drawPile = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L68">    discardPile = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L70">    int index = 0;</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    for (int i = 0; i &lt; numPiles; i++) {</span>
+<span class="nc" id="L73">      cascades.add(new CascadePileImpl());</span>
+    }
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">    for (int r = 0; r &lt; numPiles; r++) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">      for (int p = r; p &lt; numPiles; p++) {</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (index &gt;= copy.size()) {</span>
+<span class="nc" id="L79">          throw new IllegalArgumentException(&quot;Not enough cards for cascade setup&quot;);</span>
+        }
+<span class="nc" id="L81">        cascades.get(p).addCard(copy.get(index));</span>
+<span class="nc" id="L82">        index++;</span>
+      }
+    }
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    while (index &lt; copy.size()) {</span>
+<span class="nc" id="L87">      drawPile.add(copy.get(index));</span>
+<span class="nc" id="L88">      index++;</span>
+    }
+
+<span class="nc" id="L91">    this.numDraw = numDraw;</span>
+<span class="nc" id="L92">    this.started = true;</span>
+<span class="nc" id="L93">  }</span>
+
+  @Override
+  public void movePile(int srcPile, int numCards, int destPile) {
+<span class="nc" id="L97">    checkStarted();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">    if (!canMovePile(srcPile, numCards, destPile)) {</span>
+<span class="nc" id="L99">      throw new IllegalStateException(&quot;Invalid move from pile &quot; + srcPile + &quot; to &quot; + destPile);</span>
+    }
+<span class="nc" id="L101">    CascadePile source = cascades.get(srcPile);</span>
+<span class="nc" id="L102">    CascadePile destination = cascades.get(destPile);</span>
+<span class="nc" id="L103">    source.moveTo(destination, numCards);</span>
+<span class="nc" id="L104">  }</span>
+
+  /**
+   * Checks if moving the given number of cards from one cascade pile to another is valid.
+   */
+  private boolean canMovePile(int srcPile, int numCards, int destPile) {
+<span class="nc bnc" id="L110" title="All 6 branches missed.">    if (srcPile &lt; 0 || srcPile &gt;= cascades.size()</span>
+<span class="nc bnc" id="L111" title="All 4 branches missed.">        || destPile &lt; 0 || destPile &gt;= cascades.size()</span>
+        || srcPile == destPile) {
+<span class="nc" id="L113">      return false;</span>
+    }
+
+<span class="nc" id="L116">    CascadePile source = cascades.get(srcPile);</span>
+<span class="nc" id="L117">    CascadePile destination = cascades.get(destPile);</span>
+
+<span class="nc bnc" id="L119" title="All 4 branches missed.">    if (numCards &lt;= 0 || numCards &gt; source.size()) {</span>
+<span class="nc" id="L120">      return false;</span>
+    }
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">    if (!isCardVisible(srcPile, source.size() - numCards)) {</span>
+<span class="nc" id="L124">      return false;</span>
+    }
+
+<span class="nc" id="L127">    KlondikeCard cardToMove = source.getCard(source.size() - numCards);</span>
+<span class="nc" id="L128">    return destination.canAdd(cardToMove);</span>
+  }
+
+  @Override
+  public void moveDraw(int destPile) {
+<span class="nc" id="L133">    checkStarted();</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">    if (!canMoveDraw(destPile)) {</span>
+<span class="nc" id="L135">      throw new IllegalStateException(&quot;Invalid move from draw to pile &quot; + destPile);</span>
+    }
+<span class="nc" id="L137">    KlondikeCard cardToMove = drawPile.remove(0);</span>
+<span class="nc" id="L138">    cascades.get(destPile).addCard(cardToMove);</span>
+<span class="nc" id="L139">  }</span>
+
+  private boolean canMoveDraw(int destPile) {
+<span class="nc bnc" id="L142" title="All 6 branches missed.">    if (drawPile.isEmpty() || destPile &lt; 0 || destPile &gt;= cascades.size()) {</span>
+<span class="nc" id="L143">      return false;</span>
+    }
+<span class="nc" id="L145">    return cascades.get(destPile).canAdd(drawPile.get(0));</span>
+  }
+
+  private boolean canMoveToFoundation(int srcPile, int foundationPile) {
+<span class="nc bnc" id="L149" title="All 6 branches missed.">    if (srcPile &lt; 0 || srcPile &gt;= cascades.size()</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        || foundationPile &lt; 0 || foundationPile &gt;= foundations.size()) {</span>
+<span class="nc" id="L151">      throw new IllegalArgumentException(&quot;Invalid pile index&quot;);</span>
+    }
+
+<span class="nc" id="L154">    CascadePile source = cascades.get(srcPile);</span>
+<span class="nc" id="L155">    List&lt;KlondikeCard&gt; foundation = foundations.get(foundationPile);</span>
+
+<span class="nc bnc" id="L157" title="All 2 branches missed.">    if (source.isEmpty()) {</span>
+<span class="nc" id="L158">      return false;</span>
+    }
+
+<span class="nc" id="L161">    KlondikeCard cardToMove = source.peek();</span>
+
+<span class="nc bnc" id="L163" title="All 2 branches missed.">    if (foundation.isEmpty()) {</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">      return cardToMove.getValue() == 1;</span>
+    } else {
+<span class="nc" id="L166">      KlondikeCard topCard = foundation.get(foundation.size() - 1);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">      return cardToMove.getSuit() == topCard.getSuit()</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">          &amp;&amp; cardToMove.getValue() == topCard.getValue() + 1;</span>
+    }
+  }
+
+  @Override
+  public void moveToFoundation(int srcPile, int foundationPile) {
+<span class="nc" id="L174">    checkStarted();</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">    if (!canMoveToFoundation(srcPile, foundationPile)) {</span>
+<span class="nc" id="L176">      throw new IllegalStateException(&quot;Invalid move to foundation&quot;);</span>
+    }
+
+<span class="nc" id="L179">    CascadePile source = cascades.get(srcPile);</span>
+<span class="nc" id="L180">    KlondikeCard cardToMove = source.peek();</span>
+<span class="nc" id="L181">    foundations.get(foundationPile).add(cardToMove);</span>
+<span class="nc" id="L182">    source.removeLast();</span>
+<span class="nc" id="L183">  }</span>
+
+  @Override
+  public void moveDrawToFoundation(int foundationPile) {
+<span class="nc" id="L187">    checkStarted();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">    if (!canMoveDrawToFoundation(foundationPile)) {</span>
+<span class="nc" id="L189">      throw new IllegalStateException(&quot;Invalid move from draw to foundation&quot;);</span>
+    }
+<span class="nc" id="L191">    KlondikeCard card = drawPile.remove(0);</span>
+<span class="nc" id="L192">    foundations.get(foundationPile).add(card);</span>
+<span class="nc" id="L193">  }</span>
+
+  private boolean canMoveDrawToFoundation(int foundationPile) {
+<span class="nc bnc" id="L196" title="All 6 branches missed.">    if (drawPile.isEmpty() || foundationPile &lt; 0 || foundationPile &gt;= foundations.size()) {</span>
+<span class="nc" id="L197">      return false;</span>
+    }
+<span class="nc" id="L199">    return canAddToFoundation(drawPile.get(0), foundationPile);</span>
+  }
+
+  @Override
+  public void discardDraw() {
+<span class="nc" id="L204">    checkStarted();</span>
+
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    if (drawPile.isEmpty()) {</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">      if (discardPile.isEmpty()) {</span>
+<span class="nc" id="L208">        throw new IllegalStateException(&quot;No cards to discard or recycle.&quot;);</span>
+      }
+<span class="nc" id="L210">      drawPile.addAll(discardPile);</span>
+<span class="nc" id="L211">      discardPile.clear();</span>
+    }
+<span class="nc" id="L213">    discardPile.add(drawPile.remove(0));</span>
+<span class="nc" id="L214">  }</span>
+
+  @Override
+  public int getNumRows() {
+<span class="nc" id="L218">    checkStarted();</span>
+<span class="nc" id="L219">    int max = 0;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">    for (CascadePile pile : cascades) {</span>
+<span class="nc" id="L221">      max = Math.max(max, pile.size());</span>
+<span class="nc" id="L222">    }</span>
+<span class="nc" id="L223">    return max;</span>
+  }
+
+  @Override
+  public int getNumPiles() {
+<span class="nc" id="L228">    checkStarted();</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">    return cascades == null ? 0 : cascades.size();</span>
+  }
+
+  @Override
+  public int getPileHeight(int pileNum) {
+<span class="nc" id="L234">    checkStarted();</span>
+<span class="nc" id="L235">    return cascades.get(pileNum).size();</span>
+  }
+
+  @Override
+  public boolean isCardVisible(int pileNum, int card) {
+<span class="nc" id="L240">    checkStarted();</span>
+<span class="nc bnc" id="L241" title="All 4 branches missed.">    if (pileNum &lt; 0 || pileNum &gt;= cascades.size()) {</span>
+<span class="nc" id="L242">      throw new IllegalArgumentException(&quot;Invalid pile number: &quot; + pileNum);</span>
+    }
+<span class="nc" id="L244">    CascadePile pile = cascades.get(pileNum);</span>
+<span class="nc bnc" id="L245" title="All 4 branches missed.">    if (card &lt; 0 || card &gt;= pile.size()) {</span>
+<span class="nc" id="L246">      throw new IllegalArgumentException(&quot;Invalid card number: &quot; + card);</span>
+    }
+<span class="nc" id="L248">    return pile.isVisible(card);</span>
+  }
+
+  @Override
+  public KlondikeCard getCardAt(int pileNum, int card) {
+<span class="nc" id="L253">    checkStarted();</span>
+<span class="nc bnc" id="L254" title="All 4 branches missed.">    if (pileNum &lt; 0 || pileNum &gt;= cascades.size()) {</span>
+<span class="nc" id="L255">      throw new IllegalArgumentException(&quot;Invalid pile number: &quot; + pileNum);</span>
+    }
+<span class="nc" id="L257">    CascadePile pile = cascades.get(pileNum);</span>
+<span class="nc bnc" id="L258" title="All 4 branches missed.">    if (card &lt; 0 || card &gt;= pile.size()) {</span>
+<span class="nc" id="L259">      throw new IllegalArgumentException(&quot;Invalid card number: &quot; + card);</span>
+    }
+<span class="nc bnc" id="L261" title="All 2 branches missed.">    if (!isCardVisible(pileNum, card)) {</span>
+<span class="nc" id="L262">      throw new IllegalArgumentException(&quot;Cannot get card at this position, card is not visible&quot;);</span>
+    }
+<span class="nc" id="L264">    return pile.getCard(card);</span>
+  }
+
+  @Override
+  public KlondikeCard getCardAt(int foundationPile) {
+<span class="nc" id="L269">    checkStarted();</span>
+<span class="nc bnc" id="L270" title="All 4 branches missed.">    if (foundationPile &lt; 0 || foundationPile &gt;= foundations.size()) {</span>
+<span class="nc" id="L271">      throw new IllegalArgumentException(&quot;Invalid foundation pile number: &quot; + foundationPile);</span>
+    }
+<span class="nc" id="L273">    List&lt;KlondikeCard&gt; pile = foundations.get(foundationPile);</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">    return pile.isEmpty() ? null : pile.get(pile.size() - 1);</span>
+  }
+
+  @Override
+  public int getNumFoundations() {
+<span class="nc" id="L279">    checkStarted();</span>
+<span class="nc" id="L280">    return 4;</span>
+  }
+
+  @Override
+  public int getNumDraw() {
+<span class="nc" id="L285">    checkStarted();</span>
+<span class="nc" id="L286">    return numDraw;</span>
+  }
+
+  @Override
+  public List&lt;KlondikeCard&gt; getDrawCards() {
+<span class="nc" id="L291">    checkStarted();</span>
+<span class="nc" id="L292">    return new ArrayList&lt;&gt;(drawPile.subList(0, Math.min(numDraw, drawPile.size())));</span>
+  }
+
+  @Override
+  public boolean isGameOver() {
+<span class="nc" id="L297">    checkStarted();</span>
+<span class="nc" id="L298">    boolean allFoundationsComplete = true;</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">    for (List&lt;KlondikeCard&gt; pile : foundations) {</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">      if (pile.size() &lt; 13) {</span>
+<span class="nc" id="L301">        allFoundationsComplete = false;</span>
+<span class="nc" id="L302">        break;</span>
+      }
+<span class="nc" id="L304">    }</span>
+<span class="nc bnc" id="L305" title="All 2 branches missed.">    if (allFoundationsComplete) {</span>
+<span class="nc" id="L306">      return true;</span>
+    }
+<span class="nc bnc" id="L308" title="All 2 branches missed.">    for (CascadePile pile : cascades) {</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">      if (!pile.isEmpty()) {</span>
+<span class="nc" id="L310">        KlondikeCard topCard = pile.peek();</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        for (int f = 0; f &lt; foundations.size(); f++) {</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">          if (canAddToFoundation(topCard, f)) {</span>
+<span class="nc" id="L313">            return false;</span>
+          }
+        }
+      }
+<span class="nc" id="L317">    }</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">    if (!drawPile.isEmpty()) {</span>
+<span class="nc" id="L319">      KlondikeCard drawCard = drawPile.get(0);</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">      for (int f = 0; f &lt; foundations.size(); f++) {</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (canAddToFoundation(drawCard, f)) {</span>
+<span class="nc" id="L322">          return false;</span>
+        }
+      }
+<span class="nc bnc" id="L325" title="All 2 branches missed.">      for (CascadePile cascade : cascades) {</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (cascade.canAdd(drawCard)) {</span>
+<span class="nc" id="L327">          return false;</span>
+        }
+<span class="nc" id="L329">      }</span>
+    }
+<span class="nc bnc" id="L331" title="All 4 branches missed.">    return drawPile.isEmpty() &amp;&amp; discardPile.isEmpty();</span>
+  }
+
+  @Override
+  public int getScore() {
+<span class="nc" id="L336">    checkStarted();</span>
+<span class="nc" id="L337">    int score = 0;</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">    for (List&lt;KlondikeCard&gt; pile : foundations) {</span>
+<span class="nc" id="L339">      score += pile.size();</span>
+<span class="nc" id="L340">    }</span>
+<span class="nc" id="L341">    return score;</span>
+  }
+
+  /**
+   * Checks if the game has been started.  If not throws an illegal state exception.
+   */
+  private void checkStarted() {
+<span class="nc bnc" id="L348" title="All 2 branches missed.">    if (!started) {</span>
+<span class="nc" id="L349">      throw new IllegalStateException(&quot;Game not started.&quot;);</span>
+    }
+<span class="nc" id="L351">  }</span>
+
+  /**
+   * checks if the deck is valid. Meaning it contains one of every card
+   *
+   * @param deck List of KlondikeCard that has all the cards.
+   *
+   * @return true if is valid else false
+   */
+
+  private boolean isValidDeck(List&lt;KlondikeCard&gt; deck) {
+<span class="nc bnc" id="L362" title="All 4 branches missed.">    if (deck == null || deck.isEmpty()) {</span>
+<span class="nc" id="L363">      return false;</span>
+    }
+
+<span class="nc" id="L366">    Set&lt;KlondikeCard&gt; uniqueCards = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">    for (KlondikeCard card : deck) {</span>
+<span class="nc bnc" id="L368" title="All 4 branches missed.">      if (card.getValue() &lt; 1 || card.getValue() &gt; 13) {</span>
+<span class="nc" id="L369">        return false;</span>
+      }
+<span class="nc bnc" id="L371" title="All 2 branches missed.">      if (!uniqueCards.add(card)) {</span>
+<span class="nc" id="L372">        return false;</span>
+      }
+<span class="nc" id="L374">    }</span>
+
+<span class="nc bnc" id="L376" title="All 2 branches missed.">    return uniqueCards.size() == 52;</span>
+  }
+
+  /**
+   * Determines if the given card can be added to specified foundation.
+   *
+   * @param card the klondikeCard to check.
+   *
+   * @param foundationPile the index of the foundation pile
+   *
+   * @return true if card can be added to the foundation pile else false
+   */
+
+  private boolean canAddToFoundation(KlondikeCard card, int foundationPile) {
+<span class="nc" id="L390">    List&lt;KlondikeCard&gt; pile = foundations.get(foundationPile);</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">    if (pile.isEmpty()) {</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">      return card.getValue() == 1; // Ace</span>
+    }
+<span class="nc" id="L394">    KlondikeCard top = pile.get(pile.size() - 1);</span>
+<span class="nc bnc" id="L395" title="All 4 branches missed.">    return top.getSuit() == card.getSuit() &amp;&amp; card.getValue() == top.getValue() + 1;</span>
+  }
+
+  /**
+   * Validates the given deck is a proper klondike deck. That it doesn't contain duplicates
+   * and that each suit is present
+   *
+   * @param deck the list of Klodike Card Objects to validate
+   * @throws IllegalArgumentException if deck is null,empty, has duplicates, or lacks an ace
+   */
+  private void validateDeck(List&lt;KlondikeCard&gt; deck) {
+<span class="nc bnc" id="L406" title="All 4 branches missed.">    if (deck == null || deck.isEmpty()) {</span>
+<span class="nc" id="L407">      throw new IllegalArgumentException(&quot;Deck cannot be null or empty&quot;);</span>
+    }
+
+    // Check for duplicate card objects (by reference, not by equals)
+<span class="nc bnc" id="L411" title="All 2 branches missed.">    for (int i = 0; i &lt; deck.size(); i++) {</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">      for (int j = i + 1; j &lt; deck.size(); j++) {</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        if (deck.get(i) == deck.get(j)) {</span>
+<span class="nc" id="L414">          throw new IllegalArgumentException(&quot;Duplicate card object in deck&quot;);</span>
+        }
+      }
+    }
+
+    // Group by suit
+<span class="nc" id="L420">    Map&lt;KlondikeCard.Suit, List&lt;Integer&gt;&gt; bySuit = new java.util.HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L421" title="All 2 branches missed.">    for (KlondikeCard card : deck) {</span>
+<span class="nc" id="L422">      bySuit.computeIfAbsent(card.getSuit(), k -&gt; new ArrayList&lt;&gt;()).add(card.getValue());</span>
+<span class="nc" id="L423">    }</span>
+
+    // Each suit must contain an Ace (value 1)
+<span class="nc bnc" id="L426" title="All 2 branches missed.">    for (Map.Entry&lt;KlondikeCard.Suit, List&lt;Integer&gt;&gt; entry : bySuit.entrySet()) {</span>
+<span class="nc" id="L427">      List&lt;Integer&gt; values = entry.getValue();</span>
+
+      // Remove duplicates and sort
+<span class="nc" id="L430">      Set&lt;Integer&gt; uniqueValues = new HashSet&lt;&gt;(values);</span>
+<span class="nc" id="L431">      List&lt;Integer&gt; sortedValues = new ArrayList&lt;&gt;(uniqueValues);</span>
+<span class="nc" id="L432">      Collections.sort(sortedValues);</span>
+
+      // Check if Ace exists
+<span class="nc bnc" id="L435" title="All 2 branches missed.">      if (!uniqueValues.contains(1)) {</span>
+<span class="nc" id="L436">        throw new IllegalArgumentException(&quot;Invalid deck: suit &quot;</span>
+<span class="nc" id="L437">            + entry.getKey() + &quot; has no valid run&quot;);</span>
+      }
+<span class="nc" id="L439">    }</span>
+<span class="nc" id="L440">  }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

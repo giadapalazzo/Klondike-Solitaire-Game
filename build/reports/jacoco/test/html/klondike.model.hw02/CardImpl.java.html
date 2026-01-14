@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CardImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">easygo</a> &gt; <a href="index.source.html" class="el_package">klondike.model.hw02</a> &gt; <span class="el_source">CardImpl.java</span></div><h1>CardImpl.java</h1><pre class="source lang-java linenums">package klondike.model.hw02;
+
+import java.util.Objects;
+
+/**
+ * Implementation of a playing card for Klondike Solitaire.
+ */
+public class CardImpl implements KlondikeCard {
+
+  private final Suit suit;
+  private final int value; // 1 = Ace, 11 = Jack, 12 = Queen, 13 = King
+
+  /**
+   * Constructor for CardImpl. Ensures that the value of a card is between 1 and 13
+   * and that the suit is not nul
+   * if these aren't followed then it will throw an illegal argument exception.
+   *
+   * @param suit the suit of the cards.
+   *
+   * @param value the value of the cards between 1 and 13
+   */
+<span class="fc" id="L22">  public CardImpl(final Suit suit, final int value) {</span>
+<span class="pc bpc" id="L23" title="2 of 4 branches missed.">    if (value &lt; 1 || value &gt; 13) {</span>
+<span class="nc" id="L24">      throw new IllegalArgumentException(&quot;Card value must be between 1 (Ace) and 13(King)&quot;);</span>
+    }
+<span class="fc" id="L26">    this.suit = Objects.requireNonNull(suit);</span>
+<span class="fc" id="L27">    this.value = value;</span>
+<span class="fc" id="L28">  }</span>
+
+  @Override
+  public Suit getSuit() {
+<span class="fc" id="L32">    return suit;</span>
+  }
+
+  @Override
+  public int getValue() {
+<span class="fc" id="L37">    return value;</span>
+  }
+
+  @Override
+  public boolean isRed() {
+<span class="nc" id="L42">    return suit.isRed();</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc bnc" id="L47" title="All 5 branches missed.">    String rank = switch (value) {</span>
+<span class="nc" id="L48">      case 1 -&gt; &quot;A&quot;;</span>
+<span class="nc" id="L49">      case 11 -&gt; &quot;J&quot;;</span>
+<span class="nc" id="L50">      case 12 -&gt; &quot;Q&quot;;</span>
+<span class="nc" id="L51">      case 13 -&gt; &quot;K&quot;;</span>
+<span class="nc" id="L52">      default -&gt; String.valueOf(value);</span>
+<span class="nc" id="L53">    };</span>
+<span class="nc" id="L54">    return rank + suit.getSymbol();</span>
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    if (this == o) {</span>
+<span class="nc" id="L61">      return true;</span>
+    }
+<span class="nc bnc" id="L63" title="All 2 branches missed.">    if (!(o instanceof CardImpl)) {</span>
+<span class="nc" id="L64">      return false;</span>
+    }
+<span class="nc" id="L66">    CardImpl cardImpl = (CardImpl) o;</span>
+<span class="nc bnc" id="L67" title="All 4 branches missed.">    return value == cardImpl.value &amp;&amp; suit == cardImpl.suit;</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="nc" id="L72">    return Objects.hash(suit, value);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
