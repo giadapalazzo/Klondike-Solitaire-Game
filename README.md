@@ -3,7 +3,7 @@
 Full-featured Klondike Solitaire implementation in Java with multiple game variants using MVC architecture.
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
-![License](https://img.shields.io/badge/License-Academic-blue?style=flat-square)
+
 
 ## 🎮 Features
 
@@ -94,9 +94,4 @@ Fall 2025 | Assignment 4: Model Variants
 **Giada Palazzo**  
 Computer Science & Philosophy @ Northeastern University
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/giada-palazzo-5581b42a9/)
-[![Email](https://img.shields.io/badge/Email-Contact-red?style=flat-square&logo=gmail)](mailto:palazzo.g@northeastern.edu)
 
----
-
-⭐ Star this repo if you found it helpful!
